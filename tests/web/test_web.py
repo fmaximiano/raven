@@ -239,3 +239,28 @@ def test_vidiq_catalog_without_key_reports_error(client):
     csrf = _csrf_token(client.app.state.ctx.secrets)  # type: ignore[attr-defined]
     r = client.post("/fontes/vidiq/catalogo", auth=AUTH, data={"csrf": csrf})
     assert r.status_code == 502 and "RAVEN_VIDIQ_API_KEY" in r.text
+
+
+def test_unexpected_source_error_does_not_break_sources_page(client, monkeypatch):
+    from raven.connectors.youtube_data import YouTubeDataConnector
+
+    async def broken(self, live=False):
+        raise AttributeError("'Tool' object has no attribute 'inputSchema'")
+
+    monkeypatch.setattr(YouTubeDataConnector, "check", broken)
+    csrf = _csrf_token(client.app.state.ctx.secrets)  # type: ignore[attr-defined]
+    r = client.post("/fontes/testar", auth=AUTH, data={"csrf": csrf})
+    assert r.status_code == 200
+    assert "erro inesperado" in r.text and "inputSchema" in r.text
+
+
+def test_unhandled_error_shows_friendly_page(tmp_path, monkeypatch):
+    import raven.web.app as web_app
+
+    def boom(*a, **k):
+        raise RuntimeError("falha interna de teste")
+
+    monkeypatch.setattr(web_app, "costs_summary", boom)
+    with TestClient(create_app(_secrets(tmp_path)), raise_server_exceptions=False) as c:
+        r = c.get("/custos", auth=AUTH)
+    assert r.status_code == 500 and "Referência" in r.text and "falha interna" not in r.text

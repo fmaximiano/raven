@@ -39,15 +39,15 @@ class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         from raven.connectors.http import redact
 
-        return json.dumps(
-            {
-                "ts": datetime.now(UTC).isoformat(),
-                "level": record.levelname,
-                "logger": record.name,
-                "msg": redact(record.getMessage()),
-            },
-            ensure_ascii=False,
-        )
+        entry = {
+            "ts": datetime.now(UTC).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "msg": redact(record.getMessage()),
+        }
+        if record.exc_info:
+            entry["exc"] = redact(self.formatException(record.exc_info))[-4000:]
+        return json.dumps(entry, ensure_ascii=False)
 
 
 def setup_logging(level: int = logging.WARNING) -> None:

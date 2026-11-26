@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import asyncio
+import logging
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from raven.benchmark.protocol import BenchmarkRunner, load_subjects
 from raven.benchmark.report import render_report
-from raven.connectors.base import HealthReport
+from raven.connectors.base import Connector, HealthReport
+from raven.connectors.http import redact
 from raven.connectors.registry import build_connectors, close_all
+from raven.connectors.vidiq import root_cause
 from raven.domain import Subject
 from raven.llm.cache import LLMCache
 from raven.llm.client import FakeLLM, LLMClient, OpenAIResponsesClient
@@ -19,6 +23,8 @@ from raven.policy import PolicyRegistry
 from raven.settings import AppConfig, Secrets, get_secrets, load_config
 from raven.storage.ledger import Ledger
 from raven.storage.runstore import RunStore
+
+log = logging.getLogger(__name__)
 
 SOURCE_IDS = ("openai", "youtube_data", "dataforseo", "outlierkit", "vidiq")
 
@@ -160,10 +166,31 @@ def refresh_benchmark_report(ctx: Ctx, run_id: str) -> Path:
     return out
 
 
-async def check_sources(ctx: Ctx, live: bool) -> list[HealthReport]:
+async def _safe_check(conn: Connector, live: bool, timeout_s: float) -> HealthReport:
+    """Nenhuma falha de uma fonte pode derrubar a verificação das demais."""
+    try:
+        return await asyncio.wait_for(conn.check(live=live), timeout=timeout_s)
+    except TimeoutError:
+        return HealthReport(
+            source_id=conn.source_id,
+            configured=True,
+            authenticated=False,
+            detail=f"sem resposta em {timeout_s:.0f} s",
+        )
+    except Exception as exc:
+        log.exception("falha inesperada ao verificar %s", conn.source_id)
+        return HealthReport(
+            source_id=conn.source_id,
+            configured=True,
+            authenticated=False,
+            detail=f"erro inesperado ({redact(root_cause(exc))[:300]})",
+        )
+
+
+async def check_sources(ctx: Ctx, live: bool, timeout_s: float = 60.0) -> list[HealthReport]:
     conns = build_connectors(ctx.cfg, ctx.secrets, ctx.ledger)
     try:
-        reports = [await c.check(live=live) for c in conns.values()]
+        reports = [await _safe_check(c, live, timeout_s) for c in conns.values()]
     finally:
         await close_all(conns)
     reports.append(

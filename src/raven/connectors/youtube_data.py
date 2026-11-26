@@ -63,9 +63,15 @@ def _map_error(resp: httpx.Response) -> ConnectorError | None:
         return QuotaExceeded(SOURCE_ID, f"cota do YouTube esgotada: {message}")
     if reasons & {"rateLimitExceeded", "userRateLimitExceeded"} or resp.status_code == 429:
         return RateLimited(SOURCE_ID, message)
-    if reasons & {"keyInvalid", "forbidden", "accessNotConfigured"} or resp.status_code in (
-        401,
-        403,
+    key_problem = "API key not valid" in message or "API key expired" in message
+    if (
+        key_problem
+        or reasons & {"keyInvalid", "forbidden", "accessNotConfigured"}
+        or resp.status_code
+        in (
+            401,
+            403,
+        )
     ):
         return AuthError(SOURCE_ID, f"HTTP {resp.status_code} {sorted(reasons)}: {message}")
     if resp.status_code >= 500:
