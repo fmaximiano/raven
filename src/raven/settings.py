@@ -28,6 +28,8 @@ class Secrets(BaseSettings):
     vidiq_api_key: SecretStr | None = None
     telegram_bot_token: SecretStr | None = None
     telegram_chat_id: str | None = None
+    web_user: str = "raven"
+    web_password: SecretStr | None = None  # sem senha, a interface web recusa acesso
 
     data_dir: Path = PROJECT_ROOT / "data"
     config_dir: Path = PROJECT_ROOT / "config"

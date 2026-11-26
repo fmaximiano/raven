@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Fontes · RAVEN{% endblock %}
+{% block content %}
+<h1>Fontes</h1>
+<div class="card">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Fonte</th><th>Credencial</th><th>Autenticação</th><th>Detalhe</th></tr></thead>
+    <tbody>
+    {% for r in reports %}
+      <tr>
+        <td>{{ r.source_id }}</td>
+        <td class="{{ 'ok' if r.configured else 'err' }}">{{ 'configurada' if r.configured else 'ausente' }}</td>
+        <td class="{{ 'ok' if r.authenticated else 'err' if r.authenticated == false else 'muted' }}">
+          {{ 'ok' if r.authenticated else 'falhou' if r.authenticated == false else 'não testada' }}</td>
+        <td class="muted">{{ r.detail }}{% if r.observed %} {{ r.observed }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <form method="post" action="/fontes/testar" style="margin-top:12px">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <button type="submit" class="secondary">Testar autenticação real</button>
+    <p class="hint">Faz a chamada mais barata de cada fonte configurada: 1 unidade do YouTube, consulta de saldo no DataForSEO, 2 créditos no OutlierKit e listagem de ferramentas no vidIQ (sem créditos).</p>
+  </form>
+</div>
+
+{% for info, pol in infos %}
+<div class="card">
+  <strong>{{ info.name }}</strong> <span class="tag">{{ info.status.value }}</span>
+  <p class="muted" style="margin:4px 0">Capacidades: {{ info.capabilities | join(', ') }} · filtro de idioma: {{ 'sim' if info.supports_language_filter else 'não' }} · filtro de país: {{ 'sim' if info.supports_region_filter else 'não' }} · custo em {{ info.cost_unit }}</p>
+  <p class="muted" style="margin:4px 0">Política: {{ pol.status }} · retenção {{ pol.retention_days }} dias</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Classe de dado</th><th>Exibir</th><th>Enviar à IA</th><th>Compor score</th><th>Métrica derivada</th><th>Agregar</th></tr></thead>
+    <tbody>
+    {% for dc, rules in pol.data_classes.items() %}
+      <tr><td>{{ dc }}</td>
+      {% for u in ('display','llm_input','scoring_input','derived_metric','aggregate') %}
+        {% set p = rules.get(u, 'deny') %}
+        <td class="{{ 'ok' if p == 'allow' else 'err' if p == 'deny' else 'muted' }}">{{ {'allow':'sim','deny':'não','pending':'pendente'}[p] }}</td>
+      {% endfor %}</tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <ul class="muted">{% for l in info.limitations %}<li>{{ l }}</li>{% endfor %}</ul>
+</div>
+{% endfor %}
+
+{% for p in planned %}
+<div class="card"><strong>{{ p.name }}</strong> <span class="tag">não implementado</span><p class="muted" style="margin:4px 0">{{ p.reason }}</p></div>
+{% endfor %}
+{% endblock %}

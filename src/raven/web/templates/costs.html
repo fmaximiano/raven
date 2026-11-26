@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Custos · RAVEN{% endblock %}
+{% block content %}
+<h1>Custos registrados</h1>
+<p class="muted">Últimos {{ days }} dias · execuções simuladas não contam ·
+  <a href="/custos?dias=1">1 dia</a> · <a href="/custos?dias=7">7 dias</a> · <a href="/custos?dias=30">30 dias</a></p>
+<div class="card"><div class="table-wrap">
+  <table>
+    <thead><tr><th>Fonte</th><th>US$</th><th>Unidades</th></tr></thead>
+    <tbody>
+    {% for sid, usd, units in rows %}
+      <tr><td>{{ sid }}</td><td>{{ '%.4f' % usd }}</td><td class="muted">{{ '%.1f' % units }}</td></tr>
+    {% endfor %}
+      <tr><th>Total</th><th>{{ '%.4f' % (rows | sum(attribute=1)) }}</th><th></th></tr>
+    </tbody>
+  </table>
+</div></div>
+<div class="card">
+  <strong>Limites aplicados antes de cada chamada de IA</strong>
+  <p class="muted" style="margin:4px 0">Por execução: US$ {{ budgets.usd_per_run }} · por dia: US$ {{ budgets.usd_per_day }} · por mês: US$ {{ budgets.usd_per_month }}. Alterar em <code>config/raven.yaml</code>.</p>
+  <p class="hint">Unidades: tokens (OpenAI), unidades de cota (YouTube), créditos (OutlierKit, vidIQ). O custo em US$ do OutlierKit e do vidIQ é estimado pelo preço do plano.</p>
+</div>
+{% endblock %}

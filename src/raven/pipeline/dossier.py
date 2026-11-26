@@ -91,18 +91,18 @@ def _market_section(m: MarketResult) -> str:
     lines = [f"### {m.market} ({m.language})\n"]
     if sc:
         if sc.status.value == "bloqueada":
-            lines.append(f"**Status:** BLOQUEADA — {sc.blocked_reason}\n")
+            lines.append(f"**Status:** BLOQUEADA — {sc.blocked_reason}\n\n")
         elif sc.point is not None:
             lines.append(
-                f"**Score experimental:** {sc.point}/100 (intervalo {sc.minimum}–{sc.maximum}; cobertura {sc.coverage:.0%})\n"
+                f"**Score experimental:** {sc.point}/100 (intervalo {sc.minimum}–{sc.maximum}; cobertura {sc.coverage:.0%})\n\n"
             )
         else:
             lines.append(
                 f"**Score:** não exibido — cobertura {sc.coverage:.0%} abaixo do mínimo. "
-                f"Intervalo possível: {sc.minimum}–{sc.maximum}/100.\n"
+                f"Intervalo possível: {sc.minimum}–{sc.maximum}/100.\n\n"
             )
     if cf:
-        lines.append(f"**Confiança:** {cf.level} ({cf.value})\n")
+        lines.append(f"**Confiança:** {cf.level} ({cf.value})\n\n")
         lines.extend(f"- {r}\n" for r in cf.reasons)
     lines.append("\n| Critério | Nível | Método | Entra no score? | Observação |\n|---|---|---|---|---|\n")
     for a in m.assessments:
@@ -122,7 +122,7 @@ def _market_section(m: MarketResult) -> str:
         c = m.competition
         lines.append(f"\n**Oferta:** {c.supply_situation} — {c.rationale}\n")
         if c.underexplored_angles:
-            lines.append("Ângulos pouco explorados: " + "; ".join(c.underexplored_angles) + "\n")
+            lines.append("\nÂngulos pouco explorados: " + "; ".join(c.underexplored_angles) + "\n")
     if m.editorial:
         e = m.editorial
         lines.append(
@@ -164,8 +164,8 @@ def render_markdown(result: InvestigationResult, costs: list[dict[str, Any]]) ->
         i = result.interpretation
         out.append(
             f"## 2. Assunto\n**Conceito:** {i.core_subject}\n\n**Gancho:** {i.narrative_hook}\n\n"
-            f"**Fatos a verificar:**\n{_bullets(i.facts_to_verify)}\n"
-            f"**Elementos do criador original a não replicar:**\n{_bullets(i.creator_specific_expression)}\n"
+            f"**Fatos a verificar:**\n\n{_bullets(i.facts_to_verify)}\n"
+            f"**Elementos do criador original a não replicar:**\n\n{_bullets(i.creator_specific_expression)}\n"
         )
     ranked = sorted(
         result.markets,
@@ -186,8 +186,8 @@ def render_markdown(result: InvestigationResult, costs: list[dict[str, Any]]) ->
         out.append(f"## 9. Títulos e ganchos possíveis\n{_bullets(d.title_and_hook_ideas)}\n")
         out.append(f"## 10. Recursos necessários\n{d.resources_needed}\n\n")
         out.append(
-            f"## 11. Riscos\n**Editoriais:**\n{_bullets(d.editorial_risks)}\n**Legais:**\n{_bullets(d.legal_risks)}\n"
-            f"**Culturais:**\n{_bullets(d.cultural_risks)}\n"
+            f"## 11. Riscos\n\n**Editoriais:**\n\n{_bullets(d.editorial_risks)}\n**Legais:**\n\n{_bullets(d.legal_risks)}\n"
+            f"**Culturais:**\n\n{_bullets(d.cultural_risks)}\n"
         )
         out.append(f"## 12. Lacunas de informação\n{_bullets(d.information_gaps)}\n")
         out.append(f"## 13. Parecer\n**Recomendação:** {d.final_recommendation}\n\n{d.final_opinion}\n\n")

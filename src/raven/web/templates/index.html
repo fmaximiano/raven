@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Execuções</h1>
+{% if not openai_ok %}<div class="banner">Sem chave da OpenAI configurada: só execuções simuladas estão disponíveis.</div>{% endif %}
+
+<div class="card">
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Quando (UTC)</th><th>Tipo</th><th>Assunto</th><th>Fontes</th><th>Expira</th><th></th></tr></thead>
+    <tbody>
+    {% for r in runs %}
+      <tr>
+        <td>{{ r.when.strftime('%d/%m %H:%M') }}</td>
+        <td>{{ 'Investigação' if r.kind == 'investigation' else 'Benchmark' }}
+          {% if r.simulated %}<span class="tag sim">simulado</span>{% endif %}</td>
+        <td>{{ r.subject }}</td>
+        <td class="muted">{{ r.sources | join(', ') }}</td>
+        <td class="muted">{{ r.expires_at }}</td>
+        <td><a href="/execucoes/{{ r.id }}">abrir</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="muted">Nenhuma execução ainda. <a href="/novo">Iniciar a primeira</a>.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+
+{% if jobs %}
+<h2>Tarefas recentes</h2>
+<div class="card"><div class="table-wrap">
+  <table>
+    <thead><tr><th>Início (UTC)</th><th>Tipo</th><th>Situação</th><th>Detalhe</th></tr></thead>
+    <tbody>
+    {% for j in jobs %}
+      <tr>
+        <td>{{ j.started_at.strftime('%d/%m %H:%M') }}</td>
+        <td>{{ j.kind }}</td>
+        <td class="{{ 'ok' if j.status == 'concluida' else 'err' if j.status in ('falhou', 'interrompida') else '' }}">{{ j.status.replace('_', ' ') }}</td>
+        <td>{% if j.run_id %}<a href="/execucoes/{{ j.run_id }}">{{ j.run_id }}</a>{% endif %}<span class="muted">{{ j.error or '' }}</span></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endif %}
+
+<form method="post" action="/dados/expurgar">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <button class="secondary" type="submit">Expurgar dados expirados</button>
+  <p class="hint">Remove execuções e cache cuja retenção venceu (30 dias para dados do YouTube e de fornecedores).</p>
+</form>
+{% endblock %}
