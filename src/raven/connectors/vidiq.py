@@ -42,6 +42,22 @@ DEFAULT_MCP_URL = "https://mcp.vidiq.com/mcp"
 RESEARCH_CREDITS = 5
 
 
+def _field(obj: Any, *names: str, default: Any = None) -> Any:
+    """Lê o primeiro atributo existente (SDK MCP v2 usa snake_case; v1 usava camelCase)."""
+    for n in names:
+        value = getattr(obj, n, None)
+        if value is not None:
+            return value
+    return default
+
+
+def root_cause(exc: BaseException) -> str:
+    """Desembrulha ExceptionGroup (anyio) até a causa real, para mensagens úteis."""
+    while isinstance(exc, BaseExceptionGroup) and exc.exceptions:
+        exc = exc.exceptions[0]
+    return f"{type(exc).__name__}: {exc}"
+
+
 def _walk_dicts(obj: Any) -> Iterator[dict[str, Any]]:
     if isinstance(obj, dict):
         yield obj
@@ -116,6 +132,13 @@ class VidIQConnector(Connector):
         from mcp.shared._httpx_utils import create_mcp_http_client
 
         client = create_mcp_http_client(headers={"Authorization": f"Bearer {self._key}"})
+        http_errors: list[int] = []
+
+        async def _record_status(response: Any) -> None:
+            if response.status_code >= 400:
+                http_errors.append(response.status_code)
+
+        client.event_hooks["response"].append(_record_status)  # o SDK descarta o status HTTP
         try:
             async with (
                 client,
@@ -123,22 +146,49 @@ class VidIQConnector(Connector):
                 ClientSession(read, write) as session,
             ):
                 await session.initialize()
+                tools = await self._all_tools(session)  # também habilita cabeçalhos x-mcp-header
                 if method == "list_tools":
-                    return await session.list_tools()
-                await session.list_tools()  # habilita cabeçalhos x-mcp-header, se houver
+                    return tools
                 return await session.call_tool(name or "", args or {})
         except ConnectorError:
             raise
         except Exception as exc:
-            text = str(exc)
-            if "401" in text or "403" in text or "nauthorized" in text:
-                raise AuthError(SOURCE_ID, text[:300]) from exc
+            text = root_cause(exc)
+            if http_errors:
+                text = f"HTTP {http_errors[-1]} do servidor MCP ({text})"
+            if any(code in (401, 403) for code in http_errors) or any(
+                k in text for k in ("nauthorized", "orbidden")
+            ):
+                raise AuthError(
+                    SOURCE_ID, f"{text[:300]} — chave recusada ou formato de cabeçalho diferente"
+                ) from exc
             raise ConnectorError(SOURCE_ID, f"falha MCP: {text[:300]}") from exc
 
+    @staticmethod
+    async def _all_tools(session: Any, max_pages: int = 20) -> list[Any]:
+        from mcp_types import PaginatedRequestParams
+
+        tools: list[Any] = []
+        cursor: str | None = None
+        for _ in range(max_pages):
+            params = PaginatedRequestParams(cursor=cursor) if cursor else None
+            page = await session.list_tools(params=params)
+            tools.extend(page.tools)
+            cursor = _field(page, "next_cursor", "nextCursor")
+            if not cursor:
+                break
+        return tools
+
     async def list_tools(self) -> list[dict[str, Any]]:
-        res = await self._session_call("list_tools")
+        tools = await self._session_call("list_tools")
         return [
-            {"name": t.name, "description": t.description, "input_schema": t.inputSchema} for t in res.tools
+            {
+                "name": t.name,
+                "description": t.description,
+                "input_schema": _field(t, "input_schema", "inputSchema"),
+                "output_schema": _field(t, "output_schema", "outputSchema"),
+            }
+            for t in tools
         ]
 
     async def check(self, live: bool = False) -> HealthReport:
@@ -187,7 +237,7 @@ class VidIQConnector(Connector):
         ok = False
         try:
             res = await self._session_call("call_tool", spec["tool"], args)
-            ok = not getattr(res, "isError", False)
+            ok = not _field(res, "is_error", "isError", default=False)
         finally:
             self.ledger.record(
                 source_id=SOURCE_ID,
@@ -200,7 +250,7 @@ class VidIQConnector(Connector):
             )
         if not ok:
             raise ConnectorError(SOURCE_ID, f"ferramenta retornou erro: {str(res)[:300]}")
-        payload: Any = getattr(res, "structuredContent", None)
+        payload: Any = _field(res, "structured_content", "structuredContent")
         if payload is None:
             texts = [getattr(c, "text", "") for c in getattr(res, "content", [])]
             try:

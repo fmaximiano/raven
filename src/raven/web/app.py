@@ -16,6 +16,7 @@ import hashlib
 import hmac
 import io
 import json
+import logging
 import re
 import secrets
 from datetime import UTC, datetime
@@ -44,6 +45,8 @@ from raven.services import (
 )
 from raven.settings import Secrets, get_secrets
 from raven.web.jobs import Busy, JobManager
+
+log = logging.getLogger(__name__)
 
 RUN_ID = re.compile(r"^(inv|bench)-\d{8}T\d{6}Z-[0-9a-f]{6}$")
 DOWNLOADS = {
@@ -112,6 +115,19 @@ def create_app(secrets_override: Secrets | None = None) -> FastAPI:
     app.state.ctx = ctx
     app.state.jobs = jobs
     app.state.secrets = sec
+
+    @app.exception_handler(Exception)
+    async def unexpected_error(request: Request, exc: Exception) -> HTMLResponse:
+        ref = secrets.token_hex(4)
+        log.error("erro não tratado [%s] em %s %s", ref, request.method, request.url.path, exc_info=exc)
+        return HTMLResponse(
+            "<!doctype html><meta charset='utf-8'><title>Erro · RAVEN</title>"
+            "<body style='font-family:system-ui;max-width:640px;margin:48px auto;padding:0 16px'>"
+            f"<h1>Algo deu errado</h1><p>Referência <code>{ref}</code>. "
+            "O detalhe técnico foi registrado nos logs do serviço (no Railway: aba <em>Deploy Logs</em>, procure pela referência).</p>"
+            "<p><a href='/'>Voltar</a></p></body>",
+            status_code=500,
+        )
 
     def render(request: Request, name: str, **kw: Any) -> HTMLResponse:
         return TEMPLATES.TemplateResponse(
