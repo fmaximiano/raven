@@ -94,6 +94,7 @@ class OutlierKitConnector(Connector):
             "Busca semântica sobre índice próprio (cache); atualização ao vivo custa 10 créditos",
             "Créditos compartilhados com o app; sem rollover",
             "Acesso à API no plano Hobby contraditório na documentação",
+            "Plano gratuito sem acesso à API (observado em 26/11/2026)",
         ],
     )
 

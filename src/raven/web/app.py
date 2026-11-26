@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from markdown_it import MarkdownIt
@@ -319,6 +319,31 @@ def create_app(secrets_override: Secrets | None = None) -> FastAPI:
         await close_all(conns)
         reports = await check_sources(ctx, live=True)
         return render(request, "sources.html", infos=infos, reports=reports, planned=PLANNED_ONLY, live=True)
+
+    @app.post("/fontes/vidiq/catalogo", dependencies=[Csrf])
+    async def vidiq_catalog(_: Auth) -> Response:
+        """Catálogo de ferramentas MCP do vidIQ (tools/list não consome créditos)."""
+        from raven.connectors.base import ConnectorError
+        from raven.connectors.vidiq import VidIQConnector
+
+        conns = build_connectors(ctx.cfg, ctx.secrets, ctx.ledger)
+        conn = conns.get("vidiq")
+        try:
+            if not isinstance(conn, VidIQConnector):
+                raise HTTPException(400, "Conector do vidIQ desativado na configuração.")
+            tools = await conn.list_tools()
+        except ConnectorError as exc:
+            raise HTTPException(502, f"Falha ao consultar o vidIQ: {exc}") from exc
+        finally:
+            await close_all(conns)
+        body = json.dumps(
+            {"fetched_at": datetime.now(UTC).isoformat(), "tools": tools}, ensure_ascii=False, indent=2
+        )
+        return Response(
+            body,
+            media_type="application/json",
+            headers={"Content-Disposition": 'attachment; filename="vidiq-mcp-tools.json"'},
+        )
 
     @app.get("/custos", response_class=HTMLResponse)
     def costs(request: Request, _: Auth, dias: int = 30) -> HTMLResponse:

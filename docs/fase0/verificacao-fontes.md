@@ -37,6 +37,7 @@ Fontes: [API docs](https://outlierkit.com/api-docs), [planos](https://outlierkit
 - ✅ Métricas de outlier por vídeo: `outlierMultiplier`, `channelOutlierRatio`, `viewsVsChannelAvg` etc.
 - ❌ **Nenhum filtro de idioma, país ou data** em qualquer endpoint. Para o RAVEN, isso significa que o idioma depende só do texto da consulta e que a pesquisa multilíngue fica mais fraca nessa fonte.
 - ⚠️ Acesso à API no plano Hobby é contraditório entre páginas. Pro: US$ 99/mês, 500 créditos. Teste gratuito: 30 créditos (duração "7 dias" nos termos). Política de reembolso contraditória.
+- ✅ **Observado pelo operador em 26/11/2026:** o plano gratuito **não dá acesso à API** (não é possível gerar chave). Testar o OutlierKit exige assinatura paga.
 - ⚠️ Termos remetem às regras das plataformas de origem; nada sobre armazenamento, uso comercial ou envio a IA.
 
 ## vidIQ

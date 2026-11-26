@@ -22,6 +22,11 @@
     <button type="submit" class="secondary">Testar autenticação real</button>
     <p class="hint">Faz a chamada mais barata de cada fonte configurada: 1 unidade do YouTube, consulta de saldo no DataForSEO, 2 créditos no OutlierKit e listagem de ferramentas no vidIQ (sem créditos).</p>
   </form>
+  <form method="post" action="/fontes/vidiq/catalogo" style="margin-top:12px">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <button type="submit" class="secondary">Baixar catálogo de ferramentas do vidIQ</button>
+    <p class="hint">Arquivo JSON com nomes, descrições e parâmetros de cada ferramenta MCP. Não consome créditos. Necessário para ligar as buscas do benchmark às ferramentas certas.</p>
+  </form>
 </div>
 
 {% for info, pol in infos %}

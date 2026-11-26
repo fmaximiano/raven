@@ -219,3 +219,23 @@ async def test_dossier_markdown_keeps_paragraphs(cfg, policies, ledger, store):
     html = MD.render((store.root / res.run_id / "dossier.md").read_text(encoding="utf-8"))
     assert "<p><strong>Confiança:</strong>" in html
     assert "<p><strong>Elementos do criador original a não replicar:</strong></p>" in html
+
+
+def test_vidiq_catalog_download(client, monkeypatch):
+    from raven.connectors.vidiq import VidIQConnector
+
+    async def fake_tools(self):
+        return [{"name": "outliers", "description": "d", "input_schema": {"type": "object"}}]
+
+    monkeypatch.setattr(VidIQConnector, "list_tools", fake_tools)
+    csrf = _csrf_token(client.app.state.ctx.secrets)  # type: ignore[attr-defined]
+    assert client.post("/fontes/vidiq/catalogo", auth=AUTH, data={}).status_code == 403
+    r = client.post("/fontes/vidiq/catalogo", auth=AUTH, data={"csrf": csrf})
+    assert r.status_code == 200 and "attachment" in r.headers["content-disposition"]
+    assert r.json()["tools"][0]["name"] == "outliers"
+
+
+def test_vidiq_catalog_without_key_reports_error(client):
+    csrf = _csrf_token(client.app.state.ctx.secrets)  # type: ignore[attr-defined]
+    r = client.post("/fontes/vidiq/catalogo", auth=AUTH, data={"csrf": csrf})
+    assert r.status_code == 502 and "RAVEN_VIDIQ_API_KEY" in r.text

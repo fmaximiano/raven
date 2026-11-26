@@ -68,7 +68,7 @@ A avaliação humana da lacuna de oferta já é suportada pelo motor de score (a
 
 **Proposta em duas etapas, dentro do teto de R$ 1.000:**
 
-- **Etapa A: validar acesso e contrato (~US$ 70 ≈ R$ 420).** Chave do YouTube (grátis), depósito mínimo do DataForSEO (US$ 50; o consumo previsto é ~US$ 3 e o saldo não expira), OpenAI com US$ 20, teste gratuito do OutlierKit (30 créditos) e vidIQ Free (150 créditos = 30 pesquisas). Com isso rodam os testes `live`, o benchmark reduzido e 5–10 investigações reais.
+- **Etapa A: validar acesso e contrato (~US$ 70 ≈ R$ 420).** Chave do YouTube (grátis), depósito mínimo do DataForSEO (US$ 50; o consumo previsto é ~US$ 3 e o saldo não expira), OpenAI com US$ 20 e vidIQ Free (150 créditos = 30 pesquisas). Com isso rodam os testes `live`, o benchmark reduzido e 5–10 investigações reais. **Atualização (26/11):** o teste gratuito do OutlierKit não inclui API, então ele fica fora da Etapa A; o vidIQ passa a ser a única fonte especializada testável sem custo.
 - **Etapa B: benchmark completo de um único fornecedor especializado**, escolhido pela Etapa A: OutlierKit Pro (US$ 99 ≈ R$ 594) **ou** vidIQ MAX mensal (US$ 49 ≈ R$ 294, se o mensal estiver disponível no checkout). Assinar os dois ao mesmo tempo ultrapassa o teto, e o plano exige realocação explícita nesse caso.
 
 ## 5. Configuração de fontes recomendada para o MVP (provisória)
