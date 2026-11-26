@@ -1,0 +1,93 @@
+# Políticas de uso por fonte e classe de dado.
+#
+# Valores: allow | deny | pending. "pending" é tratado como NEGADO pelo código.
+# Alterar para "allow" somente após confirmação documental ou comercial registrada
+# em `evidence_of_permission` (checklist item 12 do plano).
+#
+# Usos: display, llm_input, scoring_input, derived_metric, aggregate.
+# retention_days: prazo máximo de guarda dos dados coletados (purga via `raven data purge`).
+
+youtube_data:
+  status: documented            # documented | vendor_confirmed | pending
+  docs:
+    - https://developers.google.com/youtube/terms/developer-policies
+    - https://developers.google.com/youtube/terms/derived-metrics-policy
+  notes: >
+    Dados obtidos com chave de API são Non-Authorized Data: estatísticas no máximo 30 dias;
+    demais dados: excluir ou atualizar após 30 dias (III.E.4). Proibido criar métricas derivadas
+    (III.E.4.h) e agregar dados de canais de proprietários distintos (III.E.2.a) sem a emenda de
+    derived metrics, que exige auditoria e caso de uso de analytics. Nenhuma regra encontrada
+    proíbe enviar metadados públicos a um LLM; estatísticas ficam fora por prudência, pois a
+    interpretação por LLM pode configurar dado derivado.
+  retention_days: 30
+  derived_metrics_amendment_accepted: false
+  evidence_of_permission: null
+  data_classes:
+    metadata:   {display: allow, llm_input: allow, scoring_input: deny, derived_metric: deny, aggregate: deny}
+    statistics: {display: allow, llm_input: deny,  scoring_input: deny, derived_metric: deny, aggregate: deny}
+
+dataforseo:
+  status: pending
+  docs:
+    - https://docs.dataforseo.com/v3/keywords_data/google_trends/explore/live/
+    - https://dataforseo.com/terms-of-service/
+  notes: >
+    Termos (7.1) vedam usar dados de SERP para competir com os buscadores; não há cláusula
+    explícita de armazenamento. Confirmar com o fornecedor uso comercial, retenção e envio a LLM.
+    A SERP do YouTube via DataForSEO é coleta de terceiros sobre o YouTube: avaliar risco
+    jurídico antes de usar como fonte de pontuação.
+  retention_days: 30
+  evidence_of_permission: null
+  data_classes:
+    trends:         {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+    youtube_serp:   {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+
+outlierkit:
+  status: pending
+  docs:
+    - https://outlierkit.com/api-docs
+    - https://outlierkit.com/terms
+  notes: >
+    Termos remetem às regras das plataformas de origem e não tratam de armazenamento,
+    uso comercial ou envio a IA. Métricas de outlier são calculadas pelo fornecedor sobre dados do
+    YouTube. Confirmar por escrito antes de persistir ou pontuar.
+  retention_days: 30
+  evidence_of_permission: null
+  data_classes:
+    outliers:       {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+    keywords:       {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+
+vidiq:
+  status: pending
+  docs:
+    - https://support.vidiq.com/en/articles/15082430-vidiq-mcp
+  notes: >
+    Apenas MCP documentado (sem REST). Uso headless com chave somente-leitura não documentado;
+    cabeçalho da chave não informado. Termos de armazenamento e uso comercial não verificados.
+  retention_days: 30
+  evidence_of_permission: null
+  data_classes:
+    outliers:       {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+    keywords:       {display: allow, llm_input: pending, scoring_input: pending, derived_metric: pending, aggregate: pending}
+
+# Avaliações qualitativas: humanas ou do LLM sobre dados com llm_input permitido.
+internal:
+  status: documented
+  notes: Avaliações produzidas pelo próprio RAVEN ou pelo operador.
+  retention_days: 3650
+  evidence_of_permission: n/a
+  data_classes:
+    human_assessment: {display: allow, llm_input: allow, scoring_input: allow, derived_metric: allow, aggregate: allow}
+    llm_assessment:   {display: allow, llm_input: allow, scoring_input: allow, derived_metric: allow, aggregate: allow}
+    rule_assessment:  {display: allow, llm_input: allow, scoring_input: allow, derived_metric: allow, aggregate: allow}
+    operator_input:   {display: allow, llm_input: allow, scoring_input: allow, derived_metric: allow, aggregate: allow}
+# Nota: avaliações internas HERDAM as restrições das evidências de entrada (policy.inherited_uses);
+# as permissões acima são o teto, não um salvo-conduto.
+
+simulated:
+  status: documented
+  notes: Dados sintéticos para testes. Nunca constituem evidência real.
+  retention_days: 1
+  evidence_of_permission: n/a
+  data_classes:
+    any: {display: allow, llm_input: allow, scoring_input: allow, derived_metric: allow, aggregate: allow}

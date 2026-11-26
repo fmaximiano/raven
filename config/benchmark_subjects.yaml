@@ -1,0 +1,342 @@
+# Amostra da Fase 0: 30 assuntos (15 ciência/tecnologia/engenharia, 15 história/civilizações),
+# com consultas nativas fixas por idioma, para que todos os fornecedores recebam a MESMA entrada.
+#
+# RASCUNHO: consultas redigidas sem revisão de falante nativo. Revisar JA, DE e FR antes do teste
+# pago; registrar alterações no histórico do git (o benchmark grava o hash deste arquivo).
+#
+# Critério de escolha: temas perenes, com equivalentes plausíveis em vários mercados e origem
+# cultural variada (não centrados em EN/PT), sem dependência de material protegido.
+
+subjects:
+  # ---------------------------------------------------------------- ciência/tecnologia/engenharia
+  - id: s01-akashi
+    label: Engenharia da ponte Akashi Kaikyō
+    niche: sci_tech
+    origin_language: ja
+    native_queries:
+      en: ["Akashi Kaikyo Bridge engineering", "world's longest suspension span"]
+      es: ["puente Akashi Kaikyo ingeniería", "puente colgante más largo del mundo"]
+      pt: ["ponte Akashi Kaikyo engenharia", "maior ponte pênsil do mundo"]
+      de: ["Akashi-Kaikyō-Brücke", "längste Hängebrücke Japan"]
+      ja: ["明石海峡大橋 建設", "明石海峡大橋 技術"]
+      fr: ["pont du détroit d'Akashi", "plus long pont suspendu du monde"]
+  - id: s02-gotthard
+    label: Construção do túnel de base do Gotardo
+    niche: sci_tech
+    origin_language: de
+    native_queries:
+      en: ["Gotthard Base Tunnel construction", "longest railway tunnel"]
+      es: ["túnel de base de San Gotardo", "túnel ferroviario más largo del mundo"]
+      pt: ["túnel de base de São Gotardo", "maior túnel ferroviário do mundo"]
+      de: ["Gotthard-Basistunnel Bau", "längster Eisenbahntunnel der Welt"]
+      ja: ["ゴッタルドベーストンネル", "世界最長 鉄道トンネル"]
+      fr: ["tunnel de base du Saint-Gothard", "plus long tunnel ferroviaire du monde"]
+  - id: s03-itaipu
+    label: Engenharia da usina de Itaipu
+    niche: sci_tech
+    origin_language: pt
+    native_queries:
+      en: ["Itaipu Dam engineering", "Itaipu hydroelectric plant"]
+      es: ["represa de Itaipú", "central hidroeléctrica Itaipú"]
+      pt: ["usina de Itaipu como funciona", "construção de Itaipu"]
+      de: ["Itaipú Staudamm", "Wasserkraftwerk Itaipú"]
+      ja: ["イタイプダム", "イタイプ 水力発電所"]
+      fr: ["barrage d'Itaipu", "centrale hydroélectrique d'Itaipu"]
+  - id: s04-iter
+    label: Reator de fusão ITER
+    niche: sci_tech
+    origin_language: fr
+    native_queries:
+      en: ["ITER fusion reactor explained", "nuclear fusion ITER progress"]
+      es: ["ITER reactor de fusión", "fusión nuclear ITER"]
+      pt: ["ITER reator de fusão", "fusão nuclear ITER"]
+      de: ["ITER Kernfusion", "Fusionsreaktor ITER"]
+      ja: ["ITER 核融合", "国際熱核融合実験炉"]
+      fr: ["ITER fusion nucléaire", "réacteur ITER Cadarache"]
+  - id: s05-maglev
+    label: Trem maglev Chuo Shinkansen
+    niche: sci_tech
+    origin_language: ja
+    native_queries:
+      en: ["Chuo Shinkansen maglev", "Japan maglev train 600 km/h"]
+      es: ["tren maglev Japón Chuo Shinkansen", "tren de levitación magnética Japón"]
+      pt: ["trem maglev Japão Chuo Shinkansen", "trem de levitação magnética Japão"]
+      de: ["Chuo-Shinkansen Magnetschwebebahn", "Maglev Japan 600 km/h"]
+      ja: ["リニア中央新幹線", "超電導リニア 仕組み"]
+      fr: ["Chuo Shinkansen maglev", "train à sustentation magnétique Japon"]
+  - id: s06-marianas
+    label: Fossa das Marianas e o Challenger Deep
+    niche: sci_tech
+    origin_language: en
+    native_queries:
+      en: ["Mariana Trench explained", "Challenger Deep dive"]
+      es: ["fosa de las Marianas", "abismo Challenger"]
+      pt: ["Fossa das Marianas", "Depressão Challenger"]
+      de: ["Marianengraben", "Challengertief Tauchgang"]
+      ja: ["マリアナ海溝", "チャレンジャー海淵"]
+      fr: ["fosse des Mariannes", "abysse Challenger plongée"]
+  - id: s07-tardigrades
+    label: Resistência extrema dos tardígrados
+    niche: sci_tech
+    origin_language: en
+    native_queries:
+      en: ["tardigrades explained", "water bear survival"]
+      es: ["tardígrados", "osos de agua supervivencia"]
+      pt: ["tardígrados", "urso d'água sobrevivência"]
+      de: ["Bärtierchen", "Tardigraden überleben"]
+      ja: ["クマムシ", "クマムシ 最強 生物"]
+      fr: ["tardigrades", "oursons d'eau survie"]
+  - id: s08-concorde
+    label: Por que o Concorde foi aposentado
+    niche: sci_tech
+    origin_language: fr
+    native_queries:
+      en: ["why Concorde was retired", "Concorde supersonic history"]
+      es: ["por qué dejó de volar el Concorde", "Concorde avión supersónico"]
+      pt: ["por que o Concorde parou de voar", "Concorde avião supersônico"]
+      de: ["warum Concorde eingestellt", "Concorde Überschallflugzeug"]
+      ja: ["コンコルド なぜ 引退", "コンコルド 超音速旅客機"]
+      fr: ["pourquoi le Concorde a été arrêté", "Concorde avion supersonique"]
+  - id: s09-panama
+    label: Como funcionam as eclusas do Canal do Panamá
+    niche: sci_tech
+    origin_language: es
+    native_queries:
+      en: ["how Panama Canal locks work", "Panama Canal expansion"]
+      es: ["cómo funcionan las esclusas del Canal de Panamá", "ampliación del Canal de Panamá"]
+      pt: ["como funcionam as eclusas do Canal do Panamá", "Canal do Panamá engenharia"]
+      de: ["Panamakanal Schleusen", "Panamakanal Erweiterung"]
+      ja: ["パナマ運河 閘門 仕組み", "パナマ運河 拡張"]
+      fr: ["écluses du canal de Panama", "canal de Panama fonctionnement"]
+  - id: s10-jwst
+    label: Descobertas do telescópio James Webb
+    niche: sci_tech
+    origin_language: en
+    native_queries:
+      en: ["James Webb telescope discoveries", "how James Webb works"]
+      es: ["telescopio James Webb descubrimientos", "cómo funciona el James Webb"]
+      pt: ["telescópio James Webb descobertas", "como funciona o James Webb"]
+      de: ["James-Webb-Teleskop Entdeckungen", "James Webb Weltraumteleskop"]
+      ja: ["ジェイムズ・ウェッブ宇宙望遠鏡", "ウェッブ望遠鏡 発見"]
+      fr: ["télescope James Webb découvertes", "télescope James Webb fonctionnement"]
+  - id: s11-tonga
+    label: Erupção do Hunga Tonga (2022)
+    niche: sci_tech
+    origin_language: en
+    native_queries:
+      en: ["Hunga Tonga eruption explained", "Tonga volcano 2022"]
+      es: ["erupción Hunga Tonga", "volcán de Tonga 2022"]
+      pt: ["erupção Hunga Tonga", "vulcão de Tonga 2022"]
+      de: ["Hunga Tonga Ausbruch", "Vulkan Tonga 2022"]
+      ja: ["フンガ・トンガ 噴火", "トンガ 火山 噴火 2022"]
+      fr: ["éruption Hunga Tonga", "volcan Tonga 2022"]
+  - id: s12-burj
+    label: Fundações do Burj Khalifa
+    niche: sci_tech
+    origin_language: en
+    native_queries:
+      en: ["Burj Khalifa foundation engineering", "how Burj Khalifa was built"]
+      es: ["cimientos del Burj Khalifa", "cómo se construyó el Burj Khalifa"]
+      pt: ["fundação do Burj Khalifa", "como o Burj Khalifa foi construído"]
+      de: ["Burj Khalifa Fundament", "wie wurde der Burj Khalifa gebaut"]
+      ja: ["ブルジュ・ハリファ 基礎", "ブルジュ・ハリファ 建設"]
+      fr: ["fondations Burj Khalifa", "construction du Burj Khalifa"]
+  - id: s13-naica
+    label: Cristais gigantes da caverna de Naica
+    niche: sci_tech
+    origin_language: es
+    native_queries:
+      en: ["Naica crystal cave", "Cave of the Crystals Mexico"]
+      es: ["Cueva de los Cristales Naica", "cristales gigantes de Naica"]
+      pt: ["caverna dos cristais Naica", "cristais gigantes do México"]
+      de: ["Kristallhöhle Naica", "Riesenkristalle Mexiko"]
+      ja: ["ナイカ鉱山 巨大結晶", "結晶の洞窟 メキシコ"]
+      fr: ["grotte des cristaux de Naica", "cristaux géants Mexique"]
+  - id: s14-arecibo
+    label: Colapso do radiotelescópio de Arecibo
+    niche: sci_tech
+    origin_language: es
+    native_queries:
+      en: ["Arecibo telescope collapse", "what happened to Arecibo"]
+      es: ["colapso del radiotelescopio de Arecibo", "qué pasó con Arecibo"]
+      pt: ["colapso do radiotelescópio de Arecibo", "o que aconteceu com Arecibo"]
+      de: ["Arecibo Teleskop Einsturz", "Arecibo Observatorium"]
+      ja: ["アレシボ天文台 崩壊", "アレシボ 電波望遠鏡"]
+      fr: ["effondrement du radiotélescope d'Arecibo", "observatoire d'Arecibo"]
+  - id: s15-millau
+    label: Construção do viaduto de Millau
+    niche: sci_tech
+    origin_language: fr
+    native_queries:
+      en: ["Millau Viaduct construction", "tallest bridge in the world Millau"]
+      es: ["viaducto de Millau construcción", "puente más alto del mundo Millau"]
+      pt: ["viaduto de Millau construção", "ponte mais alta do mundo"]
+      de: ["Viadukt von Millau Bau", "höchste Brücke der Welt Millau"]
+      ja: ["ミヨー橋 建設", "世界一高い橋 ミヨー"]
+      fr: ["viaduc de Millau construction", "pont le plus haut du monde"]
+  # ---------------------------------------------------------------- história/civilizações/curiosidades
+  - id: h01-antikythera
+    label: Mecanismo de Anticítera
+    niche: history
+    origin_language: en
+    native_queries:
+      en: ["Antikythera mechanism explained", "ancient Greek computer"]
+      es: ["mecanismo de Anticitera", "la computadora más antigua del mundo"]
+      pt: ["mecanismo de Anticítera", "computador da Grécia antiga"]
+      de: ["Mechanismus von Antikythera", "antiker Computer Griechenland"]
+      ja: ["アンティキティラ島の機械", "古代ギリシャ コンピューター"]
+      fr: ["machine d'Anticythère", "premier ordinateur de l'Antiquité"]
+  - id: h02-qhapaq
+    label: Rede de estradas inca (Qhapaq Ñan)
+    niche: history
+    origin_language: es
+    native_queries:
+      en: ["Inca road system Qhapaq Nan", "how the Inca built roads"]
+      es: ["Qhapaq Ñan camino inca", "red de caminos del imperio inca"]
+      pt: ["estradas do Império Inca", "Qhapaq Ñan caminho inca"]
+      de: ["Inka Straßennetz", "Qhapaq Ñan Inkastraßen"]
+      ja: ["インカ道 カパック・ニャン", "インカ帝国 道路網"]
+      fr: ["routes incas Qhapaq Ñan", "réseau routier de l'empire inca"]
+  - id: h03-himeji
+    label: História do castelo de Himeji
+    niche: history
+    origin_language: ja
+    native_queries:
+      en: ["Himeji Castle history", "how Japanese castles survived"]
+      es: ["castillo de Himeji historia", "castillos japoneses"]
+      pt: ["castelo de Himeji história", "castelos japoneses"]
+      de: ["Burg Himeji Geschichte", "japanische Burgen"]
+      ja: ["姫路城 歴史", "姫路城 なぜ焼けなかった"]
+      fr: ["château de Himeji histoire", "châteaux japonais"]
+  - id: h04-paraguai
+    label: Guerra do Paraguai (Tríplice Aliança)
+    niche: history
+    origin_language: pt
+    native_queries:
+      en: ["Paraguayan War explained", "War of the Triple Alliance"]
+      es: ["Guerra de la Triple Alianza", "Guerra Guasu Paraguay"]
+      pt: ["Guerra do Paraguai resumo", "Guerra da Tríplice Aliança"]
+      de: ["Tripel-Allianz-Krieg Paraguay", "Paraguayischer Krieg"]
+      ja: ["パラグアイ戦争", "三国同盟戦争"]
+      fr: ["guerre de la Triple-Alliance", "guerre du Paraguay"]
+  - id: h05-teotihuacan
+    label: Quem construiu Teotihuacan
+    niche: history
+    origin_language: es
+    native_queries:
+      en: ["Teotihuacan who built it", "Teotihuacan pyramids mystery"]
+      es: ["Teotihuacan quién la construyó", "misterios de Teotihuacán"]
+      pt: ["Teotihuacan quem construiu", "pirâmides de Teotihuacan"]
+      de: ["Teotihuacán Pyramiden", "Teotihuacán Geschichte"]
+      ja: ["テオティワカン 謎", "テオティワカン ピラミッド"]
+      fr: ["Teotihuacan mystère", "pyramides de Teotihuacan"]
+  - id: h06-london-fire
+    label: Grande Incêndio de Londres (1666)
+    niche: history
+    origin_language: en
+    native_queries:
+      en: ["Great Fire of London 1666", "how the Great Fire of London started"]
+      es: ["Gran Incendio de Londres 1666", "incendio de Londres historia"]
+      pt: ["Grande Incêndio de Londres 1666", "incêndio de Londres história"]
+      de: ["Großer Brand von London 1666", "Brand von London"]
+      ja: ["ロンドン大火 1666", "ロンドン大火 原因"]
+      fr: ["grand incendie de Londres 1666", "incendie de Londres histoire"]
+  - id: h07-hansa
+    label: Liga Hanseática
+    niche: history
+    origin_language: de
+    native_queries:
+      en: ["Hanseatic League explained", "medieval trade network Hansa"]
+      es: ["Liga Hanseática historia", "la Hansa comercio medieval"]
+      pt: ["Liga Hanseática história", "Hansa comércio medieval"]
+      de: ["Hanse Geschichte", "Die Hanse Mittelalter Handel"]
+      ja: ["ハンザ同盟", "ハンザ同盟 中世 貿易"]
+      fr: ["Ligue hanséatique histoire", "la Hanse commerce médiéval"]
+  - id: h08-cathars
+    label: Cátaros e a Cruzada Albigense
+    niche: history
+    origin_language: fr
+    native_queries:
+      en: ["Cathars history", "Albigensian Crusade"]
+      es: ["cátaros historia", "cruzada albigense"]
+      pt: ["cátaros história", "cruzada albigense"]
+      de: ["Katharer Geschichte", "Albigenserkreuzzug"]
+      ja: ["カタリ派", "アルビジョア十字軍"]
+      fr: ["les cathares histoire", "croisade des albigeois"]
+  - id: h09-palmares
+    label: Quilombo dos Palmares
+    niche: history
+    origin_language: pt
+    native_queries:
+      en: ["Quilombo dos Palmares history", "Zumbi dos Palmares"]
+      es: ["Quilombo de los Palmares", "Zumbi de los Palmares"]
+      pt: ["Quilombo dos Palmares história", "Zumbi dos Palmares"]
+      de: ["Quilombo dos Palmares", "Zumbi dos Palmares Geschichte"]
+      ja: ["キロンボ・ドス・パルマーレス", "ズンビ パルマーレス"]
+      fr: ["quilombo des Palmares", "Zumbi dos Palmares histoire"]
+  - id: h10-vasa
+    label: Naufrágio do navio Vasa
+    niche: history
+    origin_language: en
+    native_queries:
+      en: ["Vasa ship why it sank", "Vasa warship 1628"]
+      es: ["barco Vasa por qué se hundió", "navío Vasa 1628"]
+      pt: ["navio Vasa por que afundou", "navio de guerra Vasa"]
+      de: ["Vasa Schiff Untergang", "Regalschiff Vasa 1628"]
+      ja: ["ヴァーサ号 沈没", "ヴァーサ号 戦艦"]
+      fr: ["navire Vasa naufrage", "vaisseau Vasa 1628"]
+  - id: h11-hadrian
+    label: Muralha de Adriano
+    niche: history
+    origin_language: en
+    native_queries:
+      en: ["Hadrian's Wall history", "why Romans built Hadrian's Wall"]
+      es: ["Muro de Adriano historia", "por qué los romanos construyeron el muro de Adriano"]
+      pt: ["Muralha de Adriano história", "por que os romanos construíram a Muralha de Adriano"]
+      de: ["Hadrianswall Geschichte", "Hadrianswall Römer"]
+      ja: ["ハドリアヌスの長城", "ハドリアヌスの長城 歴史"]
+      fr: ["mur d'Hadrien histoire", "pourquoi les Romains ont construit le mur d'Hadrien"]
+  - id: h12-bayeux
+    label: Tapeçaria de Bayeux
+    niche: history
+    origin_language: fr
+    native_queries:
+      en: ["Bayeux Tapestry explained", "Bayeux Tapestry secrets"]
+      es: ["tapiz de Bayeux", "tapiz de Bayeux historia"]
+      pt: ["tapeçaria de Bayeux", "tapeçaria de Bayeux história"]
+      de: ["Teppich von Bayeux", "Teppich von Bayeux erklärt"]
+      ja: ["バイユーのタペストリー", "バイユー タペストリー 歴史"]
+      fr: ["tapisserie de Bayeux", "tapisserie de Bayeux expliquée"]
+  - id: h13-magellan
+    label: Expedição de Magalhães-Elcano
+    niche: history
+    origin_language: es
+    native_queries:
+      en: ["Magellan expedition first circumnavigation", "Magellan Elcano voyage"]
+      es: ["primera vuelta al mundo Magallanes Elcano", "expedición de Magallanes"]
+      pt: ["viagem de Fernão de Magalhães", "primeira volta ao mundo Magalhães"]
+      de: ["Magellan Weltumsegelung", "erste Weltumsegelung Elcano"]
+      ja: ["マゼラン 世界一周", "マゼラン艦隊"]
+      fr: ["tour du monde de Magellan", "expédition Magellan Elcano"]
+  - id: h14-rongorongo
+    label: Escrita rongorongo da Ilha de Páscoa
+    niche: history
+    origin_language: es
+    native_queries:
+      en: ["Rongorongo script Easter Island", "undeciphered Rongorongo"]
+      es: ["escritura rongorongo Isla de Pascua", "rongorongo sin descifrar"]
+      pt: ["escrita rongorongo Ilha de Páscoa", "rongorongo escrita não decifrada"]
+      de: ["Rongorongo Schrift Osterinsel", "Rongorongo unentziffert"]
+      ja: ["ロンゴロンゴ文字", "イースター島 ロンゴロンゴ"]
+      fr: ["écriture rongorongo île de Pâques", "rongorongo indéchiffré"]
+  - id: h15-hashima
+    label: Ilha de Hashima (Gunkanjima)
+    niche: history
+    origin_language: ja
+    native_queries:
+      en: ["Hashima Island Gunkanjima history", "Battleship Island Japan"]
+      es: ["isla de Hashima Gunkanjima", "isla fantasma Japón Hashima"]
+      pt: ["ilha de Hashima Gunkanjima", "ilha fantasma do Japão"]
+      de: ["Hashima Insel Gunkanjima", "Geisterinsel Japan Hashima"]
+      ja: ["軍艦島 歴史", "端島 炭鉱"]
+      fr: ["île de Hashima Gunkanjima", "île fantôme Japon Hashima"]
