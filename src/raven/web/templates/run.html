@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ run_id }} · RAVEN{% endblock %}
+{% block content %}
+<p><a href="/">← Execuções</a></p>
+<div class="card">
+  <p class="muted" style="margin:0">{{ run_id }} · {{ 'Benchmark' if manifest.kind == 'benchmark' else 'Investigação' }}
+    {% if manifest.simulated %}<span class="tag sim">simulado</span>{% endif %}
+    · expira em {{ (manifest.expires_at or '')[:10] }}</p>
+  <p style="margin:8px 0 0">Arquivos:
+    {% for f in files %}<a href="/execucoes/{{ run_id }}/arquivos/{{ f }}">{{ f }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+</div>
+
+{% if manifest.kind == 'benchmark' %}
+<form class="card" method="post" action="/execucoes/{{ run_id }}/rotulos" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <strong>Rotulagem</strong>
+  <p class="hint">Baixe <code>labels.csv</code>, preencha <code>relevance</code> (2 = mesmo assunto, 1 = relacionado, 0 = irrelevante) e <code>language_ok</code> (s/n) e envie de volta. O relatório é recalculado na hora. Aceita CSV separado por vírgula ou ponto e vírgula (Excel).</p>
+  <input type="file" name="file" accept=".csv,text/csv" required>
+  <button type="submit">Enviar rótulos</button>
+</form>
+{% endif %}
+
+<article class="card doc">{{ body | safe }}</article>
+{% endblock %}

@@ -4,7 +4,7 @@
 
 ## 1. Resumo
 
-O mecanismo de pesquisa está implementado de ponta a ponta: conectores, política de uso por fonte, LLM com orçamento, correspondência multilíngue, score/confiança, dossiê e protocolo de benchmark. Ele roda hoje em modo simulado e passa em 54 testes automatizados. O que falta para decidir a Fase 1 depende de você: credenciais e contratações de teste.
+O mecanismo de pesquisa está implementado de ponta a ponta: conectores, política de uso por fonte, LLM com orçamento, correspondência multilíngue, score/confiança, dossiê e protocolo de benchmark. Ele roda hoje em modo simulado e passa em 65 testes automatizados. O que falta para decidir a Fase 1 depende de você: credenciais e contratações de teste.
 
 A verificação documental trouxe três achados que **mudam o plano**:
 
@@ -31,9 +31,11 @@ Ponto positivo: o **Trends do DataForSEO aceita `type: youtube`** (interesse de 
 | Investigação ponta a ponta + dossiê | Implementado; executado **apenas simulado** | `raven investigate --simulate`; 5 testes e2e |
 | Protocolo de benchmark (30 assuntos × 6 idiomas) + rotulagem humana + relatório | Implementado; executado **apenas simulado** | `raven benchmark run --simulate`; 1 teste e2e |
 | Retenção/expiração por fonte (execuções e cache de LLM) | Implementado e testado | `raven data purge` |
-| Docker Compose, PostgreSQL | Adiado para a Fase 1 (Docker indisponível neste ambiente para teste) | — |
+| Interface web (execuções, dossiês, disparo de tarefas, rotulagem, fontes, custos) | Implementada e testada | `raven web`; 11 testes |
+| Imagem Docker para o Railway | Construída e executada localmente (volume, permissões, health check, fluxo completo) | `Dockerfile`, `docs/deploy-railway.md` |
+| Docker Compose, PostgreSQL | Adiados para a Fase 1 | — |
 
-Qualidade: `ruff` e `mypy --strict` sem erros. `pytest`: **54 aprovados**. Os 5 testes `live` foram pulados por falta de credenciais.
+Qualidade: `ruff` e `mypy --strict` sem erros. `pytest`: **65 aprovados**. Os 5 testes `live` foram pulados por falta de credenciais.
 
 ## 3. O que a configuração padrão produz hoje
 

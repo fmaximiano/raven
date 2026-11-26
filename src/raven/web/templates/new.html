@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Nova execução · RAVEN{% endblock %}
+{% block content %}
+<h1>Nova execução</h1>
+{% if job %}<p class="muted">Aguarde a tarefa atual terminar para iniciar outra.</p>{% endif %}
+<div class="grid">
+  <form class="card" method="post" action="/tarefas/investigacao">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <h2 style="margin-top:0">Investigação</h2>
+    <label for="subject_id">Assunto da amostra</label>
+    <select id="subject_id" name="subject_id">
+      <option value="">— usar assunto livre abaixo —</option>
+      {% for s in subjects %}<option value="{{ s.id }}">{{ s.label }} ({{ s.origin_language }})</option>{% endfor %}
+    </select>
+    <label for="label">ou assunto livre</label>
+    <input id="label" type="text" name="label" maxlength="200" placeholder="Ex.: Por que o Concorde foi aposentado">
+    <label for="description">Descrição (opcional)</label>
+    <textarea id="description" name="description" rows="2" maxlength="1000"></textarea>
+    <div class="grid" style="gap:8px">
+      <div><label for="niche">Nicho</label>
+        <select id="niche" name="niche"><option value="sci_tech">Ciência e tecnologia</option><option value="history">História</option></select></div>
+      <div><label for="origin_language">Idioma de origem</label>
+        <select id="origin_language" name="origin_language">{% for l in languages %}<option>{{ l }}</option>{% endfor %}</select></div>
+    </div>
+    <label>Mercados de destino</label>
+    <div class="checks">
+      {% for m in markets %}<label><input type="checkbox" name="targets" value="{{ m.code }}" {% if m.code in ('BR','MX','DE','JP','FR') %}checked{% endif %}> {{ m.code }}</label>{% endfor %}
+    </div>
+    <label><input type="checkbox" name="simulate" value="true" {% if not openai_ok %}checked onclick="return false"{% endif %}> Simulado (sem custo, sem valor de evidência)</label>
+    <p class="hint">Estimativa real: ~US$ 0,26 em IA por investigação com 5 mercados, mais ~10 buscas da cota diária do YouTube.</p>
+    <button type="submit" {% if job %}disabled{% endif %}>Iniciar investigação</button>
+  </form>
+
+  <form class="card" method="post" action="/tarefas/benchmark">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <h2 style="margin-top:0">Benchmark de fontes</h2>
+    <label>Fornecedores</label>
+    <div class="checks">{% for p in providers %}<label><input type="checkbox" name="providers" value="{{ p }}" checked> {{ p }}</label>{% endfor %}</div>
+    <label>Idiomas</label>
+    <div class="checks">{% for l in languages %}<label><input type="checkbox" name="languages" value="{{ l }}" {% if l in ('en','es','pt','ja') %}checked{% endif %}> {{ l }}</label>{% endfor %}</div>
+    <div class="grid" style="gap:8px">
+      <div><label for="limit">Assuntos (1–30)</label><input id="limit" type="number" name="limit" min="1" max="30" value="5"></div>
+      <div><label for="qpl">Consultas por idioma</label><input id="qpl" type="number" name="queries_per_language" min="1" max="2" value="1"></div>
+    </div>
+    <label><input type="checkbox" name="trends" value="true"> Incluir Trends (YouTube) por mercado</label>
+    <label><input type="checkbox" name="simulate" value="true"> Simulado</label>
+    <p class="hint">Cada fornecedor recebe as mesmas consultas. Custo por consulta: YouTube 1 busca da cota (100/dia), DataForSEO ~US$ 0,002, OutlierKit 2 créditos, vidIQ 5 créditos.</p>
+    <button type="submit" {% if job %}disabled{% endif %}>Iniciar benchmark</button>
+  </form>
+</div>
+{% endblock %}

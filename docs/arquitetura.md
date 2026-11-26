@@ -12,7 +12,13 @@ Registro curto das decisões técnicas. Cada item: contexto, decisão, consequê
 
 **Contexto.** O plano prevê PostgreSQL + pgvector, mas a modelagem definitiva depende do que as fontes realmente entregam.
 **Decisão.** Cada execução grava artefatos auditáveis em `data/runs/<run_id>/` (manifesto, evidências JSONL, chamadas de modelo, falhas, custos, dossiê). Consumo e cotas ficam num ledger SQLite (`data/ledger.sqlite3`); cache de LLM em `data/llm_cache.sqlite3`.
-**Consequência.** A Fase 1 começa pela migração para PostgreSQL (tabelas `UsageCosts`, `Evidence`, `ResearchRuns`, `ModelExecutions` etc.) com base em dados reais. Docker Compose entra junto com o banco: não foi possível testar Docker neste ambiente e não se publica configuração não testada.
+**Consequência.** A Fase 1 começa pela migração para PostgreSQL (tabelas `UsageCosts`, `Evidence`, `ResearchRuns`, `ModelExecutions` etc.) com base em dados reais.
+
+## ADR-08 — Hospedagem no Railway com imagem portável
+
+**Contexto.** Decisão do operador (26/11/2026): hospedar no Railway em vez da VPS Orion, mantendo a migração simples.
+**Decisão.** `Dockerfile` padrão, sem recursos exclusivos do Railway; configuração só por variáveis de ambiente; dados em volume montado em `/data`. O entrypoint ajusta a posse do volume e executa o processo sem privilégios. A interface web (FastAPI + Jinja2, HTTP Basic + CSRF) roda tarefas em segundo plano, uma por vez, no mesmo processo; a fila durável no PostgreSQL substitui isso na Fase 2.
+**Consequência.** Migrar para outro host é rodar a mesma imagem com o mesmo volume e variáveis. O `railway.json` não é usado, porque o *config as code* foi descontinuado pelo Railway. Docker Compose (com PostgreSQL) entra na Fase 1.
 
 ## ADR-03 — Política de uso por fonte e classe de dado, com herança
 

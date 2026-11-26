@@ -12,6 +12,12 @@ Especificação estratégica: [`docs/Content_Radar_Plano_v2.md`](docs/Content_Ra
 - 📄 Verificação documental das fontes: [`docs/fase0/verificacao-fontes.md`](docs/fase0/verificacao-fontes.md)
 - 📄 Decisões de arquitetura: [`docs/arquitetura.md`](docs/arquitetura.md)
 
+## Interface web e deploy
+
+`uv run raven web` sobe a interface em `http://localhost:8000` (exige `RAVEN_WEB_PASSWORD`). Ela lista execuções, mostra dossiês e relatórios, dispara investigações e benchmarks, recebe a rotulagem do benchmark e exibe fontes e custos.
+
+Deploy: imagem Docker portável (`Dockerfile`). Passo a passo para o Railway e para a migração a uma VPS em [`docs/deploy-railway.md`](docs/deploy-railway.md).
+
 ## Instalação
 
 Requer Python 3.12+ e [uv](https://docs.astral.sh/uv/).
@@ -62,9 +68,11 @@ src/raven/
   pipeline/     investigação, evidências, correspondência, demanda, score, dossiê
   benchmark/    protocolo, rotulagem e relatório
   storage/      ledger de custos/cotas e artefatos de execução
+  web/          interface web (FastAPI + Jinja2) e tarefas em segundo plano
+  services.py   operações compartilhadas pela CLI e pela web
   policy.py     políticas por fonte com herança de restrições
   cli.py
-tests/          unit · contract (formato documentado das APIs) · e2e · live (-m live)
+tests/          unit · contract (formato documentado das APIs) · e2e · web · live (-m live)
 ```
 
 ## Desenvolvimento
