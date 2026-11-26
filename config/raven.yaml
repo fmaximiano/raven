@@ -1,0 +1,115 @@
+# RAVEN — configuração operacional (sem segredos; segredos ficam no .env)
+# Todos os valores são parâmetros, não constantes de código.
+
+languages: [en, es, pt, de, ja, fr]
+
+# location_code = códigos de geolocalização usados pelo DataForSEO/Google.
+# Conferir com /v3/keywords_data/google_trends/locations antes de uso real
+# (`raven sources check dataforseo` faz essa validação quando há credenciais).
+markets:
+  - {code: US, name: Estados Unidos, languages: [en], dataforseo_location_code: 2840}
+  - {code: GB, name: Reino Unido, languages: [en], dataforseo_location_code: 2826}
+  - {code: BR, name: Brasil, languages: [pt], dataforseo_location_code: 2076}
+  - {code: MX, name: México, languages: [es], dataforseo_location_code: 2484}
+  - {code: ES, name: Espanha, languages: [es], dataforseo_location_code: 2724}
+  - {code: DE, name: Alemanha, languages: [de], dataforseo_location_code: 2276}
+  - {code: JP, name: Japão, languages: [ja], dataforseo_location_code: 2392}
+  - {code: FR, name: França, languages: [fr], dataforseo_location_code: 2250}
+
+# Até 5 nichos no MVP. Dois prioritários definidos; demais em aberto.
+niches:
+  - {id: sci_tech, label: "Ciência, tecnologia e engenharia", active: true}
+  - {id: history, label: "História, civilizações e curiosidades", active: true}
+
+monitoring:
+  max_external_channels: 150
+
+schedules:  # usados a partir da Fase 2 (agendador); registrados aqui desde já
+  channel_discovery: "weekly"
+  opportunity_investigation: "daily"
+  opportunity_refresh_days: 7
+  deep_research: "manual"
+
+# Pesos experimentais (plano v2, seção 5). Devem somar 1.0.
+scoring:
+  weights:
+    destination_demand: 0.25
+    supply_gap: 0.25
+    origin_success: 0.15
+    economic_potential: 0.15
+    cultural_portability: 0.10
+    trend_timing: 0.05
+    production_feasibility: 0.05
+  # Abaixo desta cobertura (soma dos pesos com evidência permitida) não se exibe nota pontual.
+  min_coverage_for_point_score: 0.6
+  # Evidência mais antiga que isso perde peso na confiança.
+  evidence_max_age_days: 30
+
+# Roteamento de modelos por tarefa. IDs conferidos na página de preços da OpenAI em 26/11/2026;
+# confirmar disponibilidade na conta (`raven sources check openai`) antes de uso real.
+llm:
+  provider: openai
+  routes:
+    classification: gpt-6.1-terra
+    extraction: gpt-6.2-sol
+    query_generation: gpt-6.2-sol
+    match_validation: gpt-6.2-sol
+    competition_analysis: gpt-6.2-sol
+    synthesis: gpt-6.2-sol
+    deep_research: gpt-6.2-astra
+    audit: gpt-6.2-astra
+  embedding_model: text-embedding-3-large
+  embedding_dimensions: 1024
+  # USD por 1M tokens: [entrada, entrada em cache, saída, escrita em cache (opcional)].
+  # Fonte: developers.openai.com/api/docs/pricing (Standard, contexto curto), lida em 26/11/2026.
+  prices_usd_per_mtok:
+    gpt-6.1-terra: [1.00, 0.05, 5.00]
+    gpt-6.2-sol: [2.00, 0.10, 10.00, 2.50]
+    gpt-6.2-astra: [8.00, 0.40, 40.00, 10.00]
+    text-embedding-3-large: [0.13, 0.13, 0.0]
+  max_output_tokens: 8000
+
+# Limites de gasto aplicados no próprio backend (alertas do provedor podem não bloquear chamadas).
+budgets:
+  usd_per_run: 2.00
+  usd_per_day: 6.00
+  usd_per_month: 100.00
+
+# Similaridade semântica para correspondências multilíngues.
+# Limiares INICIAIS, sem calibração: ajustar com os rótulos humanos do benchmark da Fase 0.
+matching:
+  same_subject_threshold: 0.75    # >= : correspondência forte por embedding
+  ambiguous_lower_bound: 0.45     # [lower, same): validar com LLM; abaixo: descartado
+  max_candidates_per_query: 25
+  max_llm_validations_per_market: 15
+  queries_per_language: 2         # limita consumo da cota search.list do YouTube
+
+# Limites e parâmetros por fonte (cotas locais são aplicadas antes da chamada).
+sources:
+  youtube_data:
+    enabled: true
+    search_calls_per_day: 100      # cota padrão: 100 chamadas search.list/dia (bucket próprio)
+    units_per_day: 10000           # demais endpoints
+    min_interval_s: 0.1
+  dataforseo:
+    enabled: true
+    usd_per_day: 2.0
+    min_interval_s: 0.3
+    price_usd:
+      trends_explore_live: 0.011
+      youtube_serp_live_per_20: 0.002
+  outlierkit:
+    enabled: true
+    base_url: https://outlierkit.com/api/v1
+    credits_per_day: 60
+    min_interval_s: 0.5
+  vidiq:
+    enabled: true
+    mcp_url: https://mcp.vidiq.com/mcp
+    credits_per_day: 150
+    # Tool names e parâmetros NÃO documentados publicamente: descobrir com `raven sources tools vidiq`
+    tool_map: {}
+
+benchmark:
+  sample_file: config/benchmark_subjects.yaml
+  results_per_query: 20
